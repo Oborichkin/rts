@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
-public class BuildingManager : MonoBehaviour
+public class BuildingManager : UnitManager
 {
     private BoxCollider _collider;
 
@@ -18,7 +18,6 @@ public class BuildingManager : MonoBehaviour
     {
         if (other.tag == "Terrain") return;
         _nCollisions++;
-        Debug.Log("Collision entered!");
         CheckPlacement();
     }
 
@@ -26,7 +25,6 @@ public class BuildingManager : MonoBehaviour
     {
         if (other.tag == "Terrain") return;
         _nCollisions--;
-        Debug.Log("Collision exited!");
         CheckPlacement();
     }
 
@@ -77,5 +75,10 @@ public class BuildingManager : MonoBehaviour
                 invalidCornersCount++;
         }
         return invalidCornersCount < 3;
+    }
+
+    protected override bool IsActive()
+    {
+        return _building.IsFixed;
     }
 }

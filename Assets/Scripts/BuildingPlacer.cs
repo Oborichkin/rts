@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class BuildingPlacer : MonoBehaviour
 {
@@ -6,7 +7,6 @@ public class BuildingPlacer : MonoBehaviour
     private Ray _ray;
     private RaycastHit _raycastHit;
     private Vector3 _lastPlacementPosition;
-
 
     void Update()
     {
@@ -34,7 +34,11 @@ public class BuildingPlacer : MonoBehaviour
                 _lastPlacementPosition = _raycastHit.point;
             }
 
-            if (_placedBuilding.HasValidPlacement && Input.GetMouseButtonDown(0))
+            if (
+                _placedBuilding.HasValidPlacement &&
+                Input.GetMouseButtonDown(0) &&
+                !EventSystem.current.IsPointerOverGameObject()
+            )
             {
                 _PlaceBuilding();
             }
@@ -55,9 +59,9 @@ public class BuildingPlacer : MonoBehaviour
     void _PlaceBuilding()
     {
         _placedBuilding.Place();
-        // keep on building the same building type
-        _PreparePlacedBuilding(_placedBuilding.DataIndex);
         _placedBuilding = null;
+        EventManager.TriggerEvent("UpdateResourceTexts");
+        EventManager.TriggerEvent("CheckBuildingButtons");
     }
 
     void _CancelPlacedBuilding()

@@ -14,6 +14,7 @@ public class CameraMovement : MonoBehaviour
     public float minZoom = 500f;
     public float maxZoom = 2000f;
     public float borderThickness = 10f;
+    public bool EdgePaning = true;
     Vector3 zoomAmount;
     Terrain terrain;
     Vector3 newPosition;
@@ -41,7 +42,7 @@ public class CameraMovement : MonoBehaviour
     void LateUpdate()
     {
         HandleKeyboardInput();
-        HandleEdgeScreenPanning();
+        if (EdgePaning) HandleEdgeScreenPanning();
         HandleRotation();
         HandleZoom();
         HandleZommWithScrollwheel();

@@ -59,7 +59,7 @@ public class Building
         _currentHealth = data.HP;
 
         GameObject g = GameObject.Instantiate(
-            Resources.Load($"Prefabs/Buildings/{_data.Code}")
+            Resources.Load($"Prefabs/Buildings/{_data.code}")
         ) as GameObject;
         _transform = g.transform;
         _placement = BuildingPlacement.INVALID;
@@ -82,11 +82,22 @@ public class Building
         // for collisions with units
         _transform.GetComponent<BoxCollider>().isTrigger = false;
         SetMaterials();
+        // update game resources: remove the cost of the building
+        // from each game resource
+        foreach (KeyValuePair<string, int> pair in _data.Cost)
+        {
+            Globals.GAME_RESOURCES[pair.Key].AddAmount(-pair.Value);
+        }
     }
 
     public void SetPosition(Vector3 position)
     {
         _transform.position = position;
+    }
+
+    public bool CanBuy()
+    {
+        return _data.CanBuy();
     }
 
     public void CheckValidPlacement()
@@ -97,7 +108,7 @@ public class Building
             : BuildingPlacement.INVALID;
     }
 
-    public string Code { get => _data.Code; }
+    public string Code { get => _data.code; }
     public Transform Transform { get => _transform; }
     public int HP { get => _currentHealth; set => _currentHealth = value; }
     public int MaxHP { get => _data.HP; }
@@ -106,7 +117,7 @@ public class Building
         get {
             for (int i = 0; i < Globals.BUILDING_DATA.Length; i++)
             {
-                if (Globals.BUILDING_DATA[i].Code == _data.Code)
+                if (Globals.BUILDING_DATA[i].code == _data.code)
                 {
                     return i;
                 }
