@@ -45,15 +45,13 @@ public class UIManager : MonoBehaviour
         _buildingButtons = new Dictionary<string, Button>();
         for (int i = 0; i < Globals.BUILDING_DATA.Length; i++)
         {
-            GameObject button = GameObject.Instantiate(
-                buildingButtonPrefab,
-                buildingMenu);
-            string code = Globals.BUILDING_DATA[i].code;
-            button.name = code;
-            button.transform.Find("Text").GetComponent<Text>().text = code;
+            BuildingData data = Globals.BUILDING_DATA[i];
+            GameObject button = Instantiate(buildingButtonPrefab, buildingMenu);
+            button.name = data.unitName;
+            button.transform.Find("Text").GetComponent<Text>().text = data.unitName;
             Button b = button.GetComponent<Button>();
             _AddBuildingButtonListener(b, i);
-            _buildingButtons[code] = b;
+            _buildingButtons[data.code] = b;
             if (!Globals.BUILDING_DATA[i].CanBuy())
             {
                 b.interactable = false;

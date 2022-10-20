@@ -56,21 +56,17 @@ public class Building
     public Building(BuildingData data)
     {
         _data = data;
-        _currentHealth = data.HP;
+        _currentHealth = data.healthpoints;
 
-        GameObject g = GameObject.Instantiate(
-            Resources.Load($"Prefabs/Buildings/{_data.code}")
-        ) as GameObject;
+        GameObject g = GameObject.Instantiate(data.prefab) as GameObject;
         _transform = g.transform;
-        _placement = BuildingPlacement.INVALID;
+        _buildingManager = _transform.GetComponent<BuildingManager>();
         _materials = new List<Material>();
         foreach (Material material in _transform.Find("Mesh").GetComponent<Renderer>().materials)
         {
             _materials.Add(new Material(material));
         }
-        _buildingManager = g.GetComponent<BuildingManager>();
         _placement = BuildingPlacement.VALID;
-        _transform.GetComponent<BoxCollider>().isTrigger = true;
         SetMaterials();
     }
 
@@ -84,9 +80,9 @@ public class Building
         SetMaterials();
         // update game resources: remove the cost of the building
         // from each game resource
-        foreach (KeyValuePair<string, int> pair in _data.Cost)
+        foreach (ResourceValue resource in _data.cost)
         {
-            Globals.GAME_RESOURCES[pair.Key].AddAmount(-pair.Value);
+            Globals.GAME_RESOURCES[resource.code].AddAmount(-resource.amount);
         }
     }
 
@@ -108,10 +104,10 @@ public class Building
             : BuildingPlacement.INVALID;
     }
 
-    public string Code { get => _data.code; }
     public Transform Transform { get => _transform; }
     public int HP { get => _currentHealth; set => _currentHealth = value; }
-    public int MaxHP { get => _data.HP; }
+    public string Code { get => _data.code; }
+    public int MaxHP { get => _data.healthpoints; }
     public int DataIndex
     {
         get {
